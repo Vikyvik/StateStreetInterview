@@ -18,9 +18,6 @@ public class ReservationService {
     private static final String SUV2_ID   = "SUV-2";
     private static final String VAN1_ID   = "VAN-1";
 
-    private static final String ERR_DAYS = "days must be > 0";
-    private static final String ERR_PAST = "start may not be in the past";
-    private static final String ERR_NO_CAR = "No available car for requested time window";
     private static final String RES_PREFIX = "RES-";
 
     private final Map<CarType, List<Car>> carInventory = new EnumMap<>(CarType.class);
@@ -29,16 +26,17 @@ public class ReservationService {
 
     public ReservationService(Clock clock) {
         this.clock = Objects.requireNonNull(clock);
-        // Minimal static inventory: 2 Sedans, 2 SUVs, 1 Van (can change as needed)
-        carInventory.put(CarType.SEDAN, Arrays.asList(
-            new Car(SEDAN1_ID, CarType.SEDAN), new Car(SEDAN2_ID, CarType.SEDAN)
-        ));
-        carInventory.put(CarType.SUV, Arrays.asList(
-            new Car(SUV1_ID, CarType.SUV), new Car(SUV2_ID, CarType.SUV)
-        ));
-        carInventory.put(CarType.VAN, Collections.singletonList(
-            new Car(VAN1_ID, CarType.VAN)
-        ));
+        // By default, add 2 Sedans, 2 SUVs, 1 Van
+        addInventory(CarType.SEDAN, SEDAN1_ID);
+        addInventory(CarType.SEDAN, SEDAN2_ID);
+        addInventory(CarType.SUV, SUV1_ID);
+        addInventory(CarType.SUV, SUV2_ID);
+        addInventory(CarType.VAN, VAN1_ID);
+    }
+
+    // Allow extending inventory dynamically (for future extensibility)
+    public void addInventory(CarType type, String carId) {
+        carInventory.computeIfAbsent(type, t -> new ArrayList<>()).add(new Car(carId, type));
     }
 
     /**
@@ -46,16 +44,16 @@ public class ReservationService {
      * @throws IllegalArgumentException if days <= 0, or start is in the past, or if unavailable
      */
     public Reservation reserve(CarType type, LocalDateTime start, int days) {
-        if (days <= 0) throw new IllegalArgumentException(ERR_DAYS);
+        if (days <= 0) throw new IllegalArgumentException(ErrorMessages.ERR_DAYS);
         LocalDateTime now = LocalDateTime.now(clock);
-        if (start.isBefore(now)) throw new IllegalArgumentException(ERR_PAST);
+        if (start.isBefore(now)) throw new IllegalArgumentException(ErrorMessages.ERR_PAST);
 
         LocalDateTime end = start.plusDays(days);
         List<Car> cars = carInventory.getOrDefault(type, Collections.emptyList());
 
         Car allocated = findAvailableCar(cars, type, start, end);
         if (allocated == null)
-            throw new IllegalArgumentException(ERR_NO_CAR);
+            throw new IllegalArgumentException(ErrorMessages.ERR_NO_CAR);
 
         Reservation newRes = new Reservation(
                 generateReservationId(),

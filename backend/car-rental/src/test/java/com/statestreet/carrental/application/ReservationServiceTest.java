@@ -4,6 +4,8 @@ import com.statestreet.carrental.domain.CarType;
 import com.statestreet.carrental.domain.Reservation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -34,14 +36,25 @@ class ReservationServiceTest {
         assertEquals(1, service.getAllReservations().size());
     }
 
-    @Test
-    void inventoryLimitEnforced() {
-        // Only 2 SUVs in inventory
-        service.reserve(CarType.SUV, BASE.plusDays(1), 1);
-        service.reserve(CarType.SUV, BASE.plusDays(1), 1);
-        assertThrows(IllegalArgumentException.class, () -> 
-            service.reserve(CarType.SUV, BASE.plusDays(1), 1)
+    @ParameterizedTest
+    @EnumSource(value = CarType.class, names = {"SEDAN", "SUV"})
+    void inventoryLimitEnforced(CarType type) {
+        // Both Sedan and SUV have 2 cars
+        service.reserve(type, BASE.plusDays(1), 1);
+        service.reserve(type, BASE.plusDays(1), 1);
+
+        // Third attempt for the same slot should fail
+        assertThrows(IllegalArgumentException.class, () ->
+                service.reserve(type, BASE.plusDays(1), 1)
         );
+    }
+
+    @Test
+    void addInventoryAllowsNewReservation() {
+        // Add a new VAN to inventory, now two should be possible
+        service.addInventory(CarType.VAN, "VAN-EXTRA");
+        service.reserve(CarType.VAN, BASE.plusDays(1), 1);
+        service.reserve(CarType.VAN, BASE.plusDays(1), 1); // would have failed if not expanded
     }
 
     @Test
