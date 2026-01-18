@@ -2,13 +2,10 @@ package com.statestreet.carrental.application;
 
 import com.statestreet.carrental.domain.CarType;
 import com.statestreet.carrental.domain.Reservation;
-import com.statestreet.carrental.infrastructure.InMemoryCarInventory;
-import com.statestreet.carrental.infrastructure.InMemoryReservationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -16,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ReservationServiceTest {
     private ReservationService service;
-    private InMemoryReservationRepository repo;
     private static final LocalDateTime BASE = LocalDateTime.of(2023, 1, 10, 10, 0);
     private static final Clock CLOCK = Clock.fixed(
             BASE.atZone(ZoneId.systemDefault()).toInstant(),
@@ -25,13 +21,7 @@ class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
-        repo = new InMemoryReservationRepository();
-        service = new ReservationService(
-                new InMemoryCarInventory(),
-                repo,
-                new LowestIdAllocationStrategy(),
-                CLOCK
-        );
+        service = new ReservationService(CLOCK);
     }
 
     @Test
@@ -41,7 +31,7 @@ class ReservationServiceTest {
         assertEquals(CarType.SEDAN, res.getType());
         assertEquals(BASE.plusDays(1), res.getStartDateTime());
         assertEquals(BASE.plusDays(2), res.getEndDateTime());
-        assertEquals(1, repo.findAll().size());
+        assertEquals(1, service.getAllReservations().size());
     }
 
     @Test
