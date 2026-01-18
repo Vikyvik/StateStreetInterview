@@ -1,5 +1,6 @@
 package com.statestreet.carrental.infrastructure;
 
+import com.statestreet.carrental.application.ports.CarInventory;
 import com.statestreet.carrental.domain.Car;
 import com.statestreet.carrental.domain.CarType;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Returns a fixed set of cars per type, no persistence.
  */
-public class InMemoryCarInventory {
+public class InMemoryCarInventory implements CarInventory {
     private final List<Car> sedans;
     private final List<Car> suvs;
     private final List<Car> vans;
@@ -28,6 +29,7 @@ public class InMemoryCarInventory {
         );
     }
 
+    @Override
     public List<Car> getCarsByType(CarType type) {
         if (type == CarType.SEDAN) return Collections.unmodifiableList(sedans);
         if (type == CarType.SUV) return Collections.unmodifiableList(suvs);

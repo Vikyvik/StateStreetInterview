@@ -1,0 +1,19 @@
+# Maven build output
+/target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# Compiled class files
+*.class
+
+# Backend specific target directory
+backend/car-rental/target/
