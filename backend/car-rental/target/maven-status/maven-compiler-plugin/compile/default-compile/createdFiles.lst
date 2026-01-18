@@ -1,9 +1,0 @@
-com/statestreet/carrental/infrastructure/InMemoryCarInventory.class
-com/statestreet/carrental/application/AllocationStrategy.class
-com/statestreet/carrental/application/ReservationService.class
-com/statestreet/carrental/domain/CarType.class
-com/statestreet/carrental/infrastructure/InMemoryReservationRepository.class
-com/statestreet/carrental/application/LowestIdAllocationStrategy.class
-com/statestreet/carrental/domain/Car.class
-com/statestreet/carrental/domain/Reservation.class
-com/statestreet/carrental/domain/TimeWindow.class
