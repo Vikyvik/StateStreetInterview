@@ -1,0 +1,6 @@
+com/carrental/AppTest.class
+com/statestreet/carrental/application/ReservationServiceTest.class
+com/statestreet/carrental/domain/TimeWindowTest.class
+com/statestreet/carrental/infrastructure/InMemoryCarInventoryTest.class
+com/statestreet/carrental/application/LowestIdAllocationStrategyTest.class
+com/statestreet/carrental/infrastructure/InMemoryReservationRepositoryTest.class

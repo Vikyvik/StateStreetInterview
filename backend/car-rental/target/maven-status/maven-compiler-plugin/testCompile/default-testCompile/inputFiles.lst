@@ -1,0 +1,7 @@
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/statestreet/carrental/infrastructure/InMemoryCarInventoryTest.java
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/statestreet/carrental/application/LowestIdAllocationStrategyTest.java
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/statestreet/carrental/application/ReservationServiceTest.java
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/statestreet/carrental/api/ReservationControllerTest.java
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/statestreet/carrental/domain/TimeWindowTest.java
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/carrental/AppTest.java
+/Users/vivthaku/Projects/CarReservationSystem/StateStreetInterview/backend/car-rental/src/test/java/com/statestreet/carrental/infrastructure/InMemoryReservationRepositoryTest.java
