@@ -3,6 +3,7 @@ package com.statestreet.carrental.application;
 import com.statestreet.carrental.domain.Car;
 import com.statestreet.carrental.domain.CarType;
 import com.statestreet.carrental.domain.Reservation;
+import com.statestreet.carrental.domain.TimeWindow;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -22,6 +23,8 @@ public class ReservationService {
 
     private final Map<CarType, List<Car>> carInventory = new EnumMap<>(CarType.class);
     private final List<Reservation> reservations = new ArrayList<>();
+    // Per-car reservation index for faster availability checks
+    private final Map<String, List<Reservation>> reservationsByCar = new HashMap<>();
     private final Clock clock;
 
     public ReservationService(Clock clock) {
@@ -63,24 +66,19 @@ public class ReservationService {
                 end
         );
         reservations.add(newRes);
+        // index by car id
+        reservationsByCar.computeIfAbsent(allocated.getId(), k -> new ArrayList<>()).add(newRes);
         return newRes;
     }
 
     private Car findAvailableCar(List<Car> cars, CarType type, LocalDateTime start, LocalDateTime end) {
         for (Car car : cars) {
-            boolean available = reservations.stream()
-                    .filter(r -> r.getCarId().equals(car.getId()))
-                    .noneMatch(r -> overlaps(r.getStartDateTime(), r.getEndDateTime(), start, end));
+            List<Reservation> carReservations = reservationsByCar.getOrDefault(car.getId(), Collections.emptyList());
+            boolean available = carReservations.stream()
+                    .noneMatch(r -> TimeWindow.overlaps(r.getStartDateTime(), r.getEndDateTime(), start, end));
             if (available) return car;
         }
         return null;
-    }
-
-    // Returns true if either reservation overlaps the other.
-    private boolean overlaps(LocalDateTime aStart, LocalDateTime aEnd, LocalDateTime bStart, LocalDateTime bEnd) {
-        if (aStart.equals(bStart)) return true;
-        if (aEnd.equals(bStart) || bEnd.equals(aStart)) return false;
-        return bStart.isBefore(aEnd) && bEnd.isAfter(aStart);
     }
 
     // Simple id generator for demonstration purposes
